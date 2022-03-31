@@ -78,6 +78,8 @@ Selected city: @CurrentCity
     public string CurrentState { get; set; } = "NV";
     public string CurrentCity { get; set; } = "Las Vegas";
     private LocationInfo[]locations{ get; set; }
+    public decimal latitude{ get; set; }
+    public decimal longitude{ get; set; }
 
     private bool firstRender = true;
     protected override async Task OnInitializedAsync()
@@ -88,7 +90,11 @@ Selected city: @CurrentCity
         PopulateCities();
         CurrentState = "NV";
         CurrentCity = "Las Vegas";
+        GetLatLongFor(CurrentState, CurrentCity);
+        //latitude = 36.16m;
+        //longitude = 115.13m;
         firstRender = false;
+        UpdateWeather();
     }
     protected override void OnAfterRender(bool firstRender)
     {
@@ -106,6 +112,9 @@ Selected city: @CurrentCity
     {
         if (firstRender) return;
         CurrentCity = e.Value.ToString();
+
+        GetLatLongFor(CurrentState,CurrentCity);
+        UpdateWeather();
     }
     void PopulateCities()
     {
@@ -117,5 +126,18 @@ Selected city: @CurrentCity
                 CurrentCity = Cities[0];
             }
         }
+    }
+    void GetLatLongFor(string stateId,string city)
+    {
+        var item = locations!.Where(loc => loc.StateId == stateId && loc.City == city).First();
+        if(item != null) {
+            Console.WriteLine($"lat:{item.Latitude} long:{item.Longitude}");
+            latitude = item.Latitude;
+            longitude = item.Longitude;
+        }
+    }
+    async Task UpdateWeather()
+    {
+        WeatherData = await Http.GetFromJsonAsync<WeatherData>(@$"https://www.7timer.info/bin/api.pl?lon={longitude}&lat={latitude}&product=civillight&output=json");
     }
 }
