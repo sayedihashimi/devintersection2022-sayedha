@@ -94,7 +94,7 @@ Selected city: @CurrentCity
         //latitude = 36.16m;
         //longitude = 115.13m;
         firstRender = false;
-        UpdateWeather();
+        await UpdateWeather();
     }
     protected override void OnAfterRender(bool firstRender)
     {
@@ -108,13 +108,13 @@ Selected city: @CurrentCity
         Console.WriteLine($"DoStuff called, currentstate={CurrentState}");
         PopulateCities();
     }
-    void OnCityChanged(ChangeEventArgs e)
+    async Task OnCityChanged(ChangeEventArgs e)
     {
         if (firstRender) return;
-        CurrentCity = e.Value.ToString();
+        CurrentCity = e?.Value!.ToString()!;
 
         GetLatLongFor(CurrentState,CurrentCity);
-        UpdateWeather();
+        await UpdateWeather();
     }
     void PopulateCities()
     {
@@ -129,15 +129,23 @@ Selected city: @CurrentCity
     }
     void GetLatLongFor(string stateId,string city)
     {
-        var item = locations!.Where(loc => loc.StateId == stateId && loc.City == city).First();
-        if(item != null) {
-            Console.WriteLine($"lat:{item.Latitude} long:{item.Longitude}");
-            latitude = item.Latitude;
-            longitude = item.Longitude;
+        Console.WriteLine($"getlatlong for: state='{stateId}',city='{city}'");
+        try {
+            var item = locations!.Where(loc => loc.StateId == stateId && loc.City == city).First();
+            if (item != null) {
+                Console.WriteLine($"lat:{item.Latitude} long:{item.Longitude}");
+                latitude = item.Latitude;
+                longitude = item.Longitude;
+            }
+        }
+        catch(Exception ex) {
+            Console.WriteLine($"unable to get lat/long. Error: {ex}");
         }
     }
     async Task UpdateWeather()
     {
+        Console.WriteLine($"weather url: https://www.7timer.info/bin/api.pl?lon={longitude}&lat={latitude}&product=civillight&output=json");
         WeatherData = await Http.GetFromJsonAsync<WeatherData>(@$"https://www.7timer.info/bin/api.pl?lon={longitude}&lat={latitude}&product=civillight&output=json");
+        StateHasChanged();
     }
 }
