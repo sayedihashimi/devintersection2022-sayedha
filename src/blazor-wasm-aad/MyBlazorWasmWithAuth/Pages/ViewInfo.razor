@@ -1,0 +1,40 @@
+﻿@page "/viewinfo"
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize]
+<h3>Info</h3>
+<AuthorizeView>
+    <Authorized>
+        <h3>claims</h3>
+        @foreach(var claim in @context.User.Claims){
+            <ul>
+                <li>@claim.Issuer</li>
+                <li>@claim.Value</li>
+                <li>@claim.Type</li>
+            </ul>
+        }
+        
+        <p>username: "@context.User?.FindFirst("preferred_username")?.Value"</p>
+        
+        <ul>
+            <li>Username: <code>@context.User?.FindFirst("preferred_username")?.Value</code> </li>
+            <li><code>Name: @context.User?.FindFirst("name")?.Value</code></li>
+            
+        </ul>
+
+        
+
+
+    </Authorized>
+    <NotAuthorized>
+        Please <a href="authentication/login">Log in</a>.
+    </NotAuthorized>
+</AuthorizeView>
+
+
+
+        
+
+@code {
+
+}
