@@ -24,13 +24,28 @@ namespace MyBlazorWasmWithAuth.Pages
     {
         private WeatherForecast[]? forecasts;
         private WeatherData? weatherData;
+        private LocationInfo[]? locations;
+        private List<string>? states;
+        private List<string>? cities;
+        public string currentState="NV";
+        public string currentCity;
         protected override async Task OnInitializedAsync()
         {
             // Las Vegas
             var lat = "36.16";
             var lon = "115.13";
             weatherData = await Http.GetFromJsonAsync<WeatherData>(@$"https://www.7timer.info/bin/api.pl?lon={lon}&lat={lat}&product=civillight&output=json");
+
+            locations = await Http.GetFromJsonAsync<LocationInfo[]>(@"uscities.json");
+            var loc1 = locations[0];
+
+            states = locations.Select(x => x.StateId).Distinct().ToList();
+            states.Sort();
             
+
+
+
+
             forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
         }
 

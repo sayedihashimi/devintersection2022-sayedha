@@ -1,5 +1,6 @@
 ﻿@using MyBlazorWasmWithAuth.Pages
 @using static MyBlazorWasmWithAuth.Pages.FetchData
+@inject HttpClient Http
 @*<table class="table">
     <thead>
         <tr>
@@ -21,6 +22,18 @@
         }
     </tbody>
 </table>*@
+<p>State:
+<select>
+    @if(States != null){
+        @foreach(var state in States) {
+            <option value="@state" selected=@(string.Equals(state,CurrentState))>@state</option>
+        }
+    }
+</select>
+City:
+
+Selected state: @CurrentState
+</p>
 <table class="table">
     <thead>
         <tr>
@@ -51,4 +64,16 @@
     public WeatherForecast[] Forecasts{ get; set; }
     [Parameter]
     public WeatherData WeatherData{ get; set; }
+
+    public List<string>States{ get; set; }
+    public List<string>Cities{ get; set; }
+
+    public string CurrentState { get; set; } = "NV";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var locations = await Http.GetFromJsonAsync<LocationInfo[]>(@"uscities.json");
+        States = locations!.Select(x => x.StateId).Distinct().ToList();
+        States.Sort();
+    }
 }
