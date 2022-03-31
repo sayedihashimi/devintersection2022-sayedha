@@ -23,7 +23,7 @@
     </tbody>
 </table>*@
 <p>State:
-<select>
+<select @onchange="OnStateChanged">
     @if(States != null){
         @foreach(var state in States) {
             <option value="@state" selected=@(string.Equals(state,CurrentState))>@state</option>
@@ -31,8 +31,15 @@
     }
 </select>
 City:
-
+<select @onchange="OnCityChanged">
+        @if(Cities != null) {
+            @foreach(var city in Cities) {
+                <option value="@city" selected=@(string.Equals(city,CurrentCity))>@city</option>
+            }
+        }
+    </select>
 Selected state: @CurrentState
+Selected city: @CurrentCity
 </p>
 <table class="table">
     <thead>
@@ -69,11 +76,46 @@ Selected state: @CurrentState
     public List<string>Cities{ get; set; }
 
     public string CurrentState { get; set; } = "NV";
+    public string CurrentCity { get; set; } = "Las Vegas";
+    private LocationInfo[]locations{ get; set; }
 
+    private bool firstRender = true;
     protected override async Task OnInitializedAsync()
     {
-        var locations = await Http.GetFromJsonAsync<LocationInfo[]>(@"uscities.json");
+        locations = await Http.GetFromJsonAsync<LocationInfo[]>(@"uscities.json");
         States = locations!.Select(x => x.StateId).Distinct().ToList();
         States.Sort();
+        PopulateCities();
+        CurrentState = "NV";
+        CurrentCity = "Las Vegas";
+        firstRender = false;
+    }
+    protected override void OnAfterRender(bool firstRender)
+    {
+        CurrentState = "NV";
+        CurrentCity = "Las Vegas";
+    }
+    void OnStateChanged(ChangeEventArgs e)
+    {
+        if (firstRender) return;
+        CurrentState = e.Value.ToString();
+        Console.WriteLine($"DoStuff called, currentstate={CurrentState}");
+        PopulateCities();
+    }
+    void OnCityChanged(ChangeEventArgs e)
+    {
+        if (firstRender) return;
+        CurrentCity = e.Value.ToString();
+    }
+    void PopulateCities()
+    {
+        if (!string.IsNullOrEmpty(CurrentState) && locations != null && locations.Length>0) {
+            Console.WriteLine($"updating city, currentstate={CurrentState}");
+            Cities = locations!.Where(x => x.StateId == CurrentState).Select(x => x.City).Distinct().ToList();
+            Cities.Sort();
+            if (!firstRender) {
+                CurrentCity = Cities[0];
+            }
+        }
     }
 }
