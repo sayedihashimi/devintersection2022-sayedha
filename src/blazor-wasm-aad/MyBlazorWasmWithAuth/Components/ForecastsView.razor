@@ -36,8 +36,8 @@
             {
                 <tr>
                     <td>@DateTime.ParseExact(@forecast.DateInt.ToString(),"yyyyMMdd",null).ToShortDateString()</td>
-                    <td>@forecast.Temp.Min</td>
-                    <td>@forecast.Temp.Max</td>
+                    <td>@forecast.Temp.Min&#176;</td>
+                    <td>@forecast.Temp.Max&#176;</td>
                     <td>@forecast.Summary</td>
                 </tr>
             }
