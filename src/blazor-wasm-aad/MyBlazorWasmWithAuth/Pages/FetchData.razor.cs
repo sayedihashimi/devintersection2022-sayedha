@@ -23,29 +23,9 @@ namespace MyBlazorWasmWithAuth.Pages
     public partial class FetchData
     {
         private WeatherForecast[]? forecasts;
-        private WeatherData? weatherData;
-        private LocationInfo[]? locations;
-        private List<string>? states;
-        private List<string>? cities;
-        public string currentState="NV";
-        public string currentCity;
+
         protected override async Task OnInitializedAsync()
         {
-            // Las Vegas
-            var lat = "36.16";
-            var lon = "115.13";
-            weatherData = await Http.GetFromJsonAsync<WeatherData>(@$"https://www.7timer.info/bin/api.pl?lon={lon}&lat={lat}&product=civillight&output=json");
-
-            locations = await Http.GetFromJsonAsync<LocationInfo[]>(@"uscities.json");
-            var loc1 = locations[0];
-
-            states = locations.Select(x => x.StateId).Distinct().ToList();
-            states.Sort();
-            
-
-
-
-
             forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
         }
 
@@ -86,6 +66,11 @@ namespace MyBlazorWasmWithAuth.Pages
     public class Temp
     {
         public int Min { get; set; }
+        [JsonIgnore]
+        public int MinF => (int)Math.Round(9m / 5m * Min + 32);
+
         public int Max { get; set; }
+        [JsonIgnore]
+        public int MaxF => (int)Math.Round(9m / 5m * Max + 32);
     }
 }
