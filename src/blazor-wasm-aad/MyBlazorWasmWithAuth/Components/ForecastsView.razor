@@ -1,73 +1,56 @@
 ﻿@using MyBlazorWasmWithAuth.Pages
 @using static MyBlazorWasmWithAuth.Pages.FetchData
 @inject HttpClient Http
-@*<table class="table">
-    <thead>
-        <tr>
-            <th>Date</th>
-            <th>Temp. (C)</th>
-            <th>Temp. (F)</th>
-            <th>Summary</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var forecast in Forecasts)
-        {
-            <tr>
-                <td>@forecast.Date.ToShortDateString()</td>
-                <td>@forecast.TemperatureC</td>
-                <td>@forecast.TemperatureF</td>
-                <td>@forecast.Summary</td>
-            </tr>
-        }
-    </tbody>
-</table>*@
-<p>State:
-<select @onchange="OnStateChanged">
-    @if(States != null){
-        @foreach(var state in States) {
-            <option value="@state" selected=@(string.Equals(state,CurrentState))>@state</option>
-        }
-    }
-</select>
-City:
-<select @onchange="OnCityChanged">
-        @if(Cities != null) {
-            @foreach(var city in Cities) {
-                <option value="@city" selected=@(string.Equals(city,CurrentCity))>@city</option>
+
+@if (WeatherData == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <p>State:
+    <select @onchange="OnStateChanged" disabled="@IsLoading">
+        @if(States != null) {
+            @foreach(var state in States) {
+                <option value="@state" selected="@(string.Equals(state,CurrentState))">@state</option>
             }
         }
     </select>
-</p>
-<table id="forecastTable" class="table" isLoading=@IsLoading>
-    <thead>
-        <tr>
-            <th>Date</th>
-            <th>Temp. min (F)</th>
-            <th>Temp. max (F)</th>
-            <th>Summary</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if(WeatherData != null && WeatherData.Forecasts != null && WeatherData.Forecasts.Count > 0) {
-            foreach (var forecast in WeatherData.Forecasts)
-            {
-                <tr>
-                    <td>@DateTime.ParseExact(@forecast.DateInt.ToString(),"yyyyMMdd",null).ToShortDateString()</td>
-                    <td>@forecast.Temp.MinF &#176;</td>
-                    <td>@forecast.Temp.MaxF &#176;</td>
-                    <td>@forecast.Summary</td>
-                </tr>
+    City:
+    <select @onchange="OnCityChanged" disabled="@IsLoading">
+            @if(Cities != null) {
+                @foreach(var city in Cities) {
+                    <option value="@city" selected="@(string.Equals(city,CurrentCity))">@city</option>
+                }
             }
-        }
-    </tbody>
-</table>
-
+        </select>
+    </p>
+    <table id="forecastTable" class="table" isLoading="@IsLoading">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temp. min (F)</th>
+                <th>Temp. max (F)</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if(WeatherData != null && WeatherData.Forecasts != null && WeatherData.Forecasts.Count > 0) {
+                foreach (var forecast in WeatherData.Forecasts)
+                {
+                    <tr>
+                        <td>@GetDateStringFor(@forecast.DateInt)</td>
+                        <td>@forecast.Temp!.MinF &#176;</td>
+                        <td>@forecast.Temp!.MaxF &#176;</td>
+                        <td>@forecast.Summary</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}
 
 @code {
-    [Parameter]
-    public WeatherForecast[] Forecasts{ get; set; }
-
     public WeatherData? WeatherData{ get; set; }
 
     public List<string>? States{ get; set; }
@@ -87,53 +70,47 @@ City:
         set {
             _isLoading = value;
             StateHasChanged();
-            Console.WriteLine($"isLoading set to '{_isLoading}'");
         }
     }
-    private bool firstRender = true;
+
     protected override async Task OnInitializedAsync()
     {
         IsLoading = true;
         locations = await Http.GetFromJsonAsync<LocationInfo[]>(@"uscities.json");
-        States = locations!.Select(x => x.StateId).Distinct().ToList();
-        States.Sort();
-        await PopulateCities();
+        PopulateStates();
+        PopulateCities();
         CurrentState = "NV";
         CurrentCity = "Las Vegas";
-        GetLatLongFor(CurrentState, CurrentCity);
-        firstRender = false;
         await UpdateWeather();
         IsLoading = false;
     }
 
-    async Task OnStateChanged(ChangeEventArgs e)
+    void OnStateChanged(ChangeEventArgs e)
     {
-        if (firstRender) return;
         CurrentState = e.Value!.ToString()!;
-        Console.WriteLine($"DoStuff called, currentstate={CurrentState}");
-        await PopulateCities();
+        PopulateCities();
     }
     async Task OnCityChanged(ChangeEventArgs e)
     {
-        if (firstRender) return;
         CurrentCity = e.Value!.ToString()!;
-        Console.WriteLine($"set currentcity: {CurrentCity}");
         GetLatLongFor(CurrentState,CurrentCity);
         await UpdateWeather();
     }
-    async Task PopulateCities()
+    void PopulateStates()
     {
-        if (!string.IsNullOrEmpty(CurrentState) && locations != null && locations.Length>0) {
-            Console.WriteLine($"updating city, currentstate={CurrentState}");
+        States = locations!.Select(x => x.StateId).Distinct().ToList();
+        States.Sort();
+    }
+    void PopulateCities()
+    {
+        if (!string.IsNullOrEmpty(CurrentState) && locations?.Length>0) {
             Cities = locations!.Where(x => x.StateId == CurrentState).Select(x => x.City).Distinct().ToList();
             Cities.Sort();
             CurrentCity = Cities[0];
-            await UpdateWeather();
         }
     }
     void GetLatLongFor(string stateId,string city)
     {
-        Console.WriteLine($"getlatlong for: state='{stateId}',city='{city}'");
         try {
             var item = locations!.Where(loc => loc.StateId == stateId && loc.City == city).First();
             if (item != null) {
@@ -149,10 +126,12 @@ City:
     async Task UpdateWeather()
     {
         IsLoading = true;
-        Console.WriteLine($"weather url: https://www.7timer.info/bin/api.pl?lon={longitude}&lat={latitude}&product=civillight&output=json");
         GetLatLongFor(CurrentState, CurrentCity);
+        Console.WriteLine($"weather url: https://www.7timer.info/bin/api.pl?lon={longitude}&lat={latitude}&product=civillight&output=json");        
         WeatherData = await Http.GetFromJsonAsync<WeatherData>(@$"https://www.7timer.info/bin/api.pl?lon={longitude}&lat={latitude}&product=civillight&output=json");
-        StateHasChanged();
         IsLoading = false;
     }
+
+    private string GetDateStringFor(int dateInt) =>
+        DateTime.ParseExact(dateInt.ToString(), "yyyyMMdd", null).ToShortDateString();
 }

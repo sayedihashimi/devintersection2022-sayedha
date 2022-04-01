@@ -68,7 +68,10 @@ a, .btn-link {
     border-collapse:collapse;
     min-height:200px;
 }
-#forecastTable[IsLoading] {
+[IsLoading] {
     background-color: dimgray;
     color:gray;
+}
+select[IsLoading]{
+
 }
