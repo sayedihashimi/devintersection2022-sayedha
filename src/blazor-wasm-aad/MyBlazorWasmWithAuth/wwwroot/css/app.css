@@ -62,3 +62,13 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+#forecastTable{
+    border:0;
+    border-collapse:collapse;
+    min-height:200px;
+}
+#forecastTable[IsLoading] {
+    background-color: dimgray;
+    color:gray;
+}
