@@ -1,0 +1,138 @@
+<UserSettings><ApplicationIdentity version="17.0"/><ToolsOptions/><Category name="Environment_Group" RegisteredName="Environment_Group"><Category name="Environment_Toolbox" Category="{481999F2-7479-4e03-83D5-BE808BA142DF}" Package="{DA9FB551-C724-11d0-AE1F-00A0C90FFFC3}" RegisteredName="Environment_Toolbox" PackageName="Visual Studio Environment Package"><PropertyValue name="ShowAllTabs">false</PropertyValue><PropertyValue name="Version">1</PropertyValue><PropertyValue name="DeletedTabCount">0</PropertyValue><PropertyValue name="TabCount">0</PropertyValue><PropertyValue name="DeletedItemCount">0</PropertyValue><PropertyValue name="Item0.DataProvider">{0A057BAD-6706-45D2-A800-683A29EC6BA3}</PropertyValue><PropertyValue name="Item0.ID">72A2BC2680C80EB2BB00707D82D24843</PropertyValue><PropertyValue name="Item0.Name">01-authorize-counter</PropertyValue><PropertyValue name="Item0.UseDefaultName">false</PropertyValue><PropertyValue name="Item0.Tab">General</PropertyValue><PropertyValue name="Item0.TabID">General</PropertyValue><PropertyValue name="Item0.OriginalTabID">General</PropertyValue><PropertyValue name="Item0.OriginalTab">General</PropertyValue><PropertyValue name="Item0.RecordType">1</PropertyValue><PropertyValue name="Item0.Data">&lt;AuthorizeView&gt;
+    &lt;Authorized&gt;
+        &lt;h1&gt;Counter&lt;/h1&gt;
+
+        &lt;p role="status"&gt;Current count: @currentCount&lt;/p&gt;
+
+        &lt;button class="btn btn-primary" @onclick="IncrementCount"&gt;Click me&lt;/button&gt;
+    &lt;/Authorized&gt;
+    &lt;NotAuthorized&gt;
+        Please &lt;a href="authentication/login"&gt;Log in&lt;/a&gt; to continue.
+    &lt;/NotAuthorized&gt;
+&lt;/AuthorizeView&gt;</PropertyValue><PropertyValue name="Item0.Position">1</PropertyValue><PropertyValue name="Item1.DataProvider">{0A057BAD-6706-45D2-A800-683A29EC6BA3}</PropertyValue><PropertyValue name="Item1.ID">8D2BC3BF8213B3552AC8AF8E366DEAF7</PropertyValue><PropertyValue name="Item1.Name">02-props-city-state</PropertyValue><PropertyValue name="Item1.UseDefaultName">false</PropertyValue><PropertyValue name="Item1.Tab">General</PropertyValue><PropertyValue name="Item1.TabID">General</PropertyValue><PropertyValue name="Item1.OriginalTabID">General</PropertyValue><PropertyValue name="Item1.OriginalTab">General</PropertyValue><PropertyValue name="Item1.RecordType">1</PropertyValue><PropertyValue name="Item1.Data">    private List&lt;string&gt;? States{ get; set; }
+    private List&lt;string&gt;? Cities{ get; set; }
+    private string CurrentState { get; set; } = "NV";
+    private string CurrentCity { get; set; } = "Las Vegas";</PropertyValue><PropertyValue name="Item1.Position">2</PropertyValue><PropertyValue name="Item2.DataProvider">{0A057BAD-6706-45D2-A800-683A29EC6BA3}</PropertyValue><PropertyValue name="Item2.ID">9B6CF690D865F014C58149BB44A527A5</PropertyValue><PropertyValue name="Item2.Name">03-razor-city-state-select</PropertyValue><PropertyValue name="Item2.UseDefaultName">false</PropertyValue><PropertyValue name="Item2.Tab">General</PropertyValue><PropertyValue name="Item2.TabID">General</PropertyValue><PropertyValue name="Item2.OriginalTabID">General</PropertyValue><PropertyValue name="Item2.OriginalTab">General</PropertyValue><PropertyValue name="Item2.RecordType">1</PropertyValue><PropertyValue name="Item2.Data">    &lt;p&gt;State:
+        &lt;select&gt;
+            @if(States != null) {
+                @foreach(var state in States) {
+                    &lt;option value="@state" selected="@(string.Equals(state,CurrentState))"&gt;@state&lt;/option&gt;
+                }
+            }
+        &lt;/select&gt;
+        City:
+        &lt;select&gt;
+            @if(Cities != null) {
+                @foreach(var city in Cities) {
+                    &lt;option value="@city" selected="@(string.Equals(city,CurrentCity))"&gt;@city&lt;/option&gt;
+                }
+            }
+        &lt;/select&gt;
+    &lt;/p&gt;</PropertyValue><PropertyValue name="Item2.Position">3</PropertyValue><PropertyValue name="Item3.DataProvider">{0A057BAD-6706-45D2-A800-683A29EC6BA3}</PropertyValue><PropertyValue name="Item3.ID">97AA206BFBB93B69C3C232FB33C72FCF</PropertyValue><PropertyValue name="Item3.Name">04-LocationInfo class</PropertyValue><PropertyValue name="Item3.UseDefaultName">false</PropertyValue><PropertyValue name="Item3.Tab">General</PropertyValue><PropertyValue name="Item3.TabID">General</PropertyValue><PropertyValue name="Item3.OriginalTabID">General</PropertyValue><PropertyValue name="Item3.OriginalTab">General</PropertyValue><PropertyValue name="Item3.RecordType">1</PropertyValue><PropertyValue name="Item3.Data">    public class LocationInfo {
+        public string City { get; set; }
+        public string State { get; set; }
+        public string StateId { get; set; }
+        [JsonPropertyName("lat")]
+        public decimal Latitude { get; set; }
+        [JsonPropertyName("long")]
+        public decimal Longitude { get; set; }
+    }</PropertyValue><PropertyValue name="Item3.Position">4</PropertyValue><PropertyValue name="Item4.DataProvider">{0A057BAD-6706-45D2-A800-683A29EC6BA3}</PropertyValue><PropertyValue name="Item4.ID">28C666A76E3D5596C6DCCD03BEFE3882</PropertyValue><PropertyValue name="Item4.Name">05-populate-state-city</PropertyValue><PropertyValue name="Item4.UseDefaultName">false</PropertyValue><PropertyValue name="Item4.Tab">General</PropertyValue><PropertyValue name="Item4.TabID">General</PropertyValue><PropertyValue name="Item4.OriginalTabID">General</PropertyValue><PropertyValue name="Item4.OriginalTab">General</PropertyValue><PropertyValue name="Item4.RecordType">1</PropertyValue><PropertyValue name="Item4.Data">    private void PopulateStates()
+    {
+        States = locations!.Select(x =&gt; x.StateId).Distinct().ToList();
+        States.Sort();
+    }
+    private void PopulateCities()
+    {
+        if (!string.IsNullOrEmpty(CurrentState) &amp;&amp; locations?.Length&gt;0) {
+            Cities = locations!.Where(x =&gt; x.StateId == CurrentState).Select(x =&gt; x.City).Distinct().ToList();
+            Cities.Sort();
+            CurrentCity = Cities[0];
+        }
+    }</PropertyValue><PropertyValue name="Item4.Position">5</PropertyValue><PropertyValue name="Item5.DataProvider">{0A057BAD-6706-45D2-A800-683A29EC6BA3}</PropertyValue><PropertyValue name="Item5.ID">4920F81550FA712F9923C1CCC43886E4</PropertyValue><PropertyValue name="Item5.Name">06-WeatherData class</PropertyValue><PropertyValue name="Item5.UseDefaultName">false</PropertyValue><PropertyValue name="Item5.Tab">General</PropertyValue><PropertyValue name="Item5.TabID">General</PropertyValue><PropertyValue name="Item5.OriginalTabID">General</PropertyValue><PropertyValue name="Item5.OriginalTab">General</PropertyValue><PropertyValue name="Item5.RecordType">1</PropertyValue><PropertyValue name="Item5.Data">    public class WeatherData {
+        public string? Product { get; set; }
+
+        [JsonPropertyName("init")]
+        public string? Date { get; set; }
+
+        [JsonPropertyName("dataseries")]
+        public List&lt;WeatherDetails&gt;? Forecasts { get; set; }
+    }
+    public class WeatherDetails {
+        [JsonPropertyName("date")]
+        public int DateInt { get; set; }
+
+        [JsonPropertyName("weather")]
+        public string? Summary { get; set; }
+
+        [JsonPropertyName("temp2m")]
+        public Temp? Temp { get; set; }
+
+        [JsonPropertyName("wind10m_max")]
+        public int Wind { get; set; }
+    }
+    public class Temp {
+        public int Min { get; set; }
+        [JsonIgnore]
+        public int MinF =&gt; (int)Math.Round(9m / 5m * Min + 32);
+
+        public int Max { get; set; }
+        [JsonIgnore]
+        public int MaxF =&gt; (int)Math.Round(9m / 5m * Max + 32);
+    }</PropertyValue><PropertyValue name="Item5.Position">6</PropertyValue><PropertyValue name="Item6.DataProvider">{0A057BAD-6706-45D2-A800-683A29EC6BA3}</PropertyValue><PropertyValue name="Item6.ID">8EFAB6C3B18DBB84B4637D0C7AEBA9F3</PropertyValue><PropertyValue name="Item6.Name">07-UpdateWeather v1</PropertyValue><PropertyValue name="Item6.UseDefaultName">false</PropertyValue><PropertyValue name="Item6.Tab">General</PropertyValue><PropertyValue name="Item6.TabID">General</PropertyValue><PropertyValue name="Item6.OriginalTabID">General</PropertyValue><PropertyValue name="Item6.OriginalTab">General</PropertyValue><PropertyValue name="Item6.RecordType">1</PropertyValue><PropertyValue name="Item6.Data">private async void UpdateWeather()
+{
+    SetLatLongFor(CurrentState!, CurrentCity!);
+    var url = $"https://www.7timer.info/bin/api.pl?lon={Longitude}&amp;lat={Latitude}&amp;product=civillight&amp;output=json";
+    Console.WriteLine($"getting weather: '{url}'");
+    WeatherData = await Http.GetFromJsonAsync&lt;WeatherData&gt;(url);
+    StateHasChanged();
+}</PropertyValue><PropertyValue name="Item6.Position">7</PropertyValue><PropertyValue name="Item7.DataProvider">{0A057BAD-6706-45D2-A800-683A29EC6BA3}</PropertyValue><PropertyValue name="Item7.ID">09A9D28FBCF0F8799A99F34DC699BE1D</PropertyValue><PropertyValue name="Item7.Name">08-weatherdata-table</PropertyValue><PropertyValue name="Item7.UseDefaultName">false</PropertyValue><PropertyValue name="Item7.Tab">General</PropertyValue><PropertyValue name="Item7.TabID">General</PropertyValue><PropertyValue name="Item7.OriginalTabID">General</PropertyValue><PropertyValue name="Item7.OriginalTab">General</PropertyValue><PropertyValue name="Item7.RecordType">1</PropertyValue><PropertyValue name="Item7.Data">&lt;table class="table"&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;Date&lt;/th&gt;
+            &lt;th&gt;Temp. Min&lt;/th&gt;
+            &lt;th&gt;Temp. Max&lt;/th&gt;
+            &lt;th&gt;Summary&lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        @if(WeatherData != null &amp;&amp; WeatherData.Forecasts != null) {
+            foreach (var forecast in @WeatherData.Forecasts)
+            {
+                &lt;tr&gt;
+                    &lt;td&gt;@forecast.GetDate().ToShortDateString()&lt;/td&gt;
+                    &lt;td&gt;@forecast.Temp!.MinF &amp;#176;&lt;/td&gt;
+                    &lt;td&gt;@forecast.Temp!.MaxF &amp;#176;&lt;/td&gt;
+                    &lt;td&gt;@forecast.Summary&lt;/td&gt;
+                &lt;/tr&gt;
+            }
+        }
+    &lt;/tbody&gt;
+&lt;/table&gt;</PropertyValue><PropertyValue name="Item7.Position">8</PropertyValue><PropertyValue name="Item8.DataProvider">{0A057BAD-6706-45D2-A800-683A29EC6BA3}</PropertyValue><PropertyValue name="Item8.ID">E65F6F55BFD8930E6D3CA07A1C38C300</PropertyValue><PropertyValue name="Item8.Name">09-OnStateChanged OnCityChanged</PropertyValue><PropertyValue name="Item8.UseDefaultName">false</PropertyValue><PropertyValue name="Item8.Tab">General</PropertyValue><PropertyValue name="Item8.TabID">General</PropertyValue><PropertyValue name="Item8.OriginalTabID">General</PropertyValue><PropertyValue name="Item8.OriginalTab">General</PropertyValue><PropertyValue name="Item8.RecordType">1</PropertyValue><PropertyValue name="Item8.Data">async Task OnStateChanged(ChangeEventArgs e)
+{
+    CurrentState = e.Value!.ToString()!;
+    PopulateCities();
+    await UpdateWeather();
+}
+async Task OnCityChanged(ChangeEventArgs e)
+{
+    CurrentCity = e.Value!.ToString()!;
+    await UpdateWeather();
+}</PropertyValue><PropertyValue name="Item8.Position">9</PropertyValue><PropertyValue name="Item9.DataProvider">{0A057BAD-6706-45D2-A800-683A29EC6BA3}</PropertyValue><PropertyValue name="Item9.ID">87F132B3B48F0C3175891BF5F08EBDEE</PropertyValue><PropertyValue name="Item9.Name">10-IsLoading CSS</PropertyValue><PropertyValue name="Item9.UseDefaultName">false</PropertyValue><PropertyValue name="Item9.Tab">General</PropertyValue><PropertyValue name="Item9.TabID">General</PropertyValue><PropertyValue name="Item9.OriginalTabID">General</PropertyValue><PropertyValue name="Item9.OriginalTab">General</PropertyValue><PropertyValue name="Item9.RecordType">1</PropertyValue><PropertyValue name="Item9.Data">#forecastTable {
+    border: 0;
+    border-collapse: collapse;
+    min-height: 200px;
+}
+
+[IsLoading] {
+    background-color: dimgray;
+    color: gray;
+}</PropertyValue><PropertyValue name="Item9.Position">10</PropertyValue><PropertyValue name="Item10.DataProvider">{0A057BAD-6706-45D2-A800-683A29EC6BA3}</PropertyValue><PropertyValue name="Item10.ID">A83E7F0CE33991964D366E6D53FBC3EA</PropertyValue><PropertyValue name="Item10.Name">11-IsLoading C# property</PropertyValue><PropertyValue name="Item10.UseDefaultName">false</PropertyValue><PropertyValue name="Item10.Tab">General</PropertyValue><PropertyValue name="Item10.TabID">General</PropertyValue><PropertyValue name="Item10.OriginalTabID">General</PropertyValue><PropertyValue name="Item10.OriginalTab">General</PropertyValue><PropertyValue name="Item10.RecordType">1</PropertyValue><PropertyValue name="Item10.Data">private bool _isLoading;
+public bool IsLoading{
+    get {
+        return _isLoading;
+    }
+    set {
+        _isLoading = value;
+        StateHasChanged();
+    }
+}</PropertyValue><PropertyValue name="Item10.Position">11</PropertyValue><PropertyValue name="ItemCount">11</PropertyValue></Category></Category></UserSettings>
