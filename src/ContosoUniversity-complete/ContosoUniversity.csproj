@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
       <ImplicitUsings>enable</ImplicitUsings>
+      <UserSecretsId>0b0dc003-82bd-4499-a141-d958c9e804cb</UserSecretsId>
   </PropertyGroup>
 
 <!-- -->
@@ -12,7 +13,7 @@
 	
   <ItemGroup>
 	  <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.0" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.SQLite" Version="6.0.0" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.SQLite" Version="6.0.1" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.0">
       <PrivateAssets>all</PrivateAssets>
