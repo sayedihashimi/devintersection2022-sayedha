@@ -1,7 +1,4 @@
-﻿#define FIRST // FIRST
-#if FIRST
-#region snippet_first
-namespace ContosoUniversity.Models
+﻿namespace ContosoUniversity.Models
 {
     public class Student
     {
@@ -13,25 +10,3 @@ namespace ContosoUniversity.Models
         public ICollection<Enrollment> Enrollments { get; set; }
     }
 }
-#endregion
-#elif PERSON
-using System.ComponentModel.DataAnnotations;
-
-namespace ContosoUniversity.Models
-{
-    public class Student : Person
-    {
-        public DateTime EnrollmentDate { get; set; }
-        [Display(Name = "Full Name")]
-        public string FullName
-        {
-            get
-            {
-                return LastName + ", " + FirstMidName;
-            }
-        }
-
-        public ICollection<Enrollment> Enrollments { get; set; }
-    }
-}
-#endif

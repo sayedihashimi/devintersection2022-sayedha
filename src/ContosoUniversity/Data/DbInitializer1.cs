@@ -1,7 +1,4 @@
-﻿#define FIRST
-#if FIRST  // First DbInitializer used
-#region snippet
-using ContosoUniversity.Models;
+﻿using ContosoUniversity.Models;
 
 namespace ContosoUniversity.Data
 {
@@ -65,5 +62,3 @@ namespace ContosoUniversity.Data
         }
     }
 }
-#endregion
-#endif
